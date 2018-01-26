@@ -246,8 +246,6 @@ EXTERN int		Cep_UnixWaitForFile (int fd, int mask, int timeout);
 /* Imported */
 EXTERN int		Tcl_ReadObjCmd _ANSI_ARGS_((ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 
-
-
 /* This structure describes the channel type structure for cep based IO */
 
 static Tcl_ChannelType cepChannelType = {
@@ -3469,7 +3467,7 @@ resolve (
 	if (hostent == NULL) {
 		const char *h_errnoMsg;
 		struct {
-			int h_errno;
+		        int _h_errno;
 			const char *name;
 		} h_errnoNames[] = {
 			{ HOST_NOT_FOUND , "HOST_NOT_FOUND" },
@@ -3483,10 +3481,10 @@ resolve (
 		};
 
 
-		h_errnoMsg = hstrerror(h_errno);
+        h_errnoMsg = hstrerror(h_errno);
 	
 		for (i = 0; h_errnoNames[i].name != NULL; i++) {
-			if (h_errno == h_errnoNames[i].h_errno) {
+            if (h_errno == h_errnoNames[i]._h_errno) {
 				break;
 			}
 		}
@@ -3496,7 +3494,7 @@ resolve (
 			len = strlen(h_errnoMsg) + TCL_INTEGER_SPACE + 3;
 			buf = (char *) ckalloc(len);
 			i++;
-			(void) snprintf(buf, len, "%s: %d", h_errnoMsg, h_errno);
+            (void) snprintf(buf, len, "%s: %d", h_errnoMsg, h_errno);
 			Tcl_SetErrorCode(interp, "POSIX", h_errnoNames[i].name, buf, (char *) NULL);
 			rerr(buf);
 			ckfree(buf);
