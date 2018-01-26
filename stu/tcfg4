@@ -1,0 +1,1 @@
+../configure --with-tcl=/usr/local/lib/tcl8.4 --with-tk=/usr/local/lib/tk8.4 --with-tclinclude=/usr/local/include/tcl8.4 --with-tkinclude=/usr/local/include/tk8.4 --with-tcllibs=/usr/local/lib --with-tklibs=/usr/local/lib --with-cc=cc --enable-shared

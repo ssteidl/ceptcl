@@ -1,0 +1,14 @@
+package require ceptcl
+
+proc moo args {
+	puts $args
+
+	puts [fconfigure [lindex $args 0]]
+	pus [fconfigure $::c]
+
+	set ::u 1
+}
+
+set s [cep -server moo 12345]
+set c [cep localhost 12345]
+vwait u

@@ -1,0 +1,2 @@
+s/@DOMAINSTRING@/-domain inet/g
+s/@LOCALHOSTADDR@/127.0.0.1/g

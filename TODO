@@ -1,0 +1,22 @@
+* Improve docs, write .3 manpages.
+
+* Write more tests
+
+* More code comments.
+
+* Tighten up command option processing and defaults.
+
+* Add signal handler to delete local server files.
+
+* Add receive queue for receiver ceps.
+
+* Option -shutdown may not work correctly.
+
+* It's possible to do some things which work, but don't make much sense.
+  Should these behaviours be restricted?
+
+* Add more fconfigure options?
+
+* See what can be done about thread-safety.
+
+* More/improved demos.

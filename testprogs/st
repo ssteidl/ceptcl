@@ -1,0 +1,18 @@
+package require ceptcl
+
+proc moo {ncep point ids} {
+	puts $point
+	puts $ids
+	puts [fconfigure $ncep]
+	puts [fconfigure $::c]
+
+	set ::u 1
+}
+
+set fs ../../ceptcl/boing
+set fc ../boing
+set s [cep -domain local -server moo $fs]
+puts [fconfigure $s]
+set c [cep -domain local $fc]
+vwait u
+#exit

@@ -1,0 +1,22 @@
+New for Ceptcl 0.4:
+
+* Major cleanup.
+* Bug removal.
+* Local names handled properly.
+* New/changed [fconfigure] options.
+* New [resolve] command for all your name resolution needs.
+* Better datagramming
+	Use [cepPuts] and [cepRead] for proper workingness.
+	Commands [puts], [gets] and [read] can still be used
+		and mixing them with the cep versions works
+		somewhat, I think - but you really shouldn't
+		be doing that.
+* New [cepPassChannel] command allows passing Tcl channels
+	over local ceps to other processes.
+* Practically no new documentation whatsoever!
+	Check out some of the example scripts.
+* 8.5 enforced.
+* Newer TEA.
+* It should all or mostly work.
+* Plan is to have a cleaned-up, documented version 0.5 in early 2009.
+

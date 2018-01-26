@@ -1,0 +1,38 @@
+'\"
+'\" Copyright (c) 2004 by Stuart Cassoff
+'\"
+'\" See the file "LICENSE" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\"
+.TH sendto n 1.0 Tcl "libceptcl"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+sendto \- Send a message from a cep
+.SH SYNOPSIS
+.sp
+\fBpackage require ceptcl\fR
+.sp
+\fBsendto\fR \fIchannelId\fR \fIhost\fR \fIport\fR \fIdata\fR
+.BE
+
+.SH DESCRIPTION
+.PP
+This command sends a message to another cep or socket using an already open cep.
+Usually used for datagram and raw ceps.
+The data sent does not pass through the Tcl channel system.
+No translation or encoding is performed regardless of the
+fconfigure settings of the cep.  The data is sent exactly as
+presented to the \fBsendto\fR command.  Any required transformations
+on the data must be performed prior to sending.
+If no errors are encountered when attempting to send the message,
+\fBsendto\fR returns the number of bytes sent.
+
+.SH "SEE ALSO"
+cep(n), fconfigure(n), flush(n), open(n), read(n), socket(n)
+
+.SH "ALSO ALSO"
+icmp(4), ip(4), ip6(4), socket(2), tcp(4), udp(4), etc, and a bunch of RFCs.
+
+.SH KEYWORDS
+bind, channel, connection, domain name, host, network address, socket, tcp, udp

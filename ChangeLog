@@ -1,0 +1,11 @@
+2008-11-28  Stuart Cassoff  <stwo@users.sourceforge.net>
+
+	* Released version 0.4. Many changes, see READMEs
+
+
+2004-03-13  Stuart Cassoff  <stwo@telus.net>
+
+	* unix/unixCep.c: not all systems have SO_REUSEPORT,
+	in that case use SO_REUSEADDR - the call becomes redundant.
+	Remove use of sin_len, sin6_len and sa_len.
+	Bumped version to 0.3.

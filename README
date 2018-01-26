@@ -1,0 +1,66 @@
+Ceptcl - Communications EndPoints for Tcl
+2004 Stuart Cassoff  <stwo@telus.net>
+
+Ceptcl is a Tcl extension which provides a variety of new
+socket types and greater control over socket options.
+
+Domains : local, inet4, inet6
+Types   : tcp, udp, raw
+Options : many, see cep(n)
+
+A 'cep' is an Communications EndPoint.  In most cases,
+ceps will be implemented by sockets.
+
+Ceptcl is designed to be backwards compatible with existing
+Tcl socket based applications. The cep command works exactly
+like the Tcl socket command; changing 'socket' to 'cep'
+inside a Tcl program should be all that is required to switch
+regular Tcl sockets to Ceptcl ceps.
+
+Ceptcl also adds many more options to the fconfigure command for ceps.
+Broadcast, multicast and a variety of socket options are supported.
+See the man page cep(n) for more the full list.
+
+Data sent and receieved through ceps usually passes through
+the Tcl channel system.  It is possible to bypass the channel
+system by using the 'sendto' command and a 'receiver' cep.
+
+Ceptcl is currently unix-only. On some platforms, ceps
+may be implemented with mechanisms other than sockets.
+
+If anyone would like to write the Mac or Windows part,
+that would be great!
+
+BUGS:
+I'm not sure how well the datagram and raw ceps
+interact with the Tcl channel system.
+The' -buffering none -blocking false' options
+to [fconfigure] should be used for datagram and raw ceps.
+
+Buffersize is an issue I have yet to fully explore
+in regards to datagram and raw ceps and would
+appreciate any feedback about errors or strange results.
+
+Ceptcl uses getnameinfo(3), which may not be thread-safe
+on all platforms.
+
+HISTORY:
+Ceptcl started out simply to make local (unix domain) sockets.
+The socket code guts were ripped from Tcl and trimmed
+down just for local sockets.  It worked, but then I got
+'sockets fever' and put eveything inet-related back in,
+plus a whole lot more.
+
+CREDITS:
+Ceptcl owes its existence to the talented programmers
+whose Tcl channel code I have used. I wouldn't have
+gotten this far without that very solid base.
+The Tcl community, for being one of the most knowledgable,
+helpful and friendly group of computer-types around.
+The OpenSSH and OpenBSD people, for their compatibility code
+(which I have used), and great software & documentation.
+
+
+Cheers!
+
+Stu

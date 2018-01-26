@@ -1,0 +1,3 @@
+package require ceptcl
+set c [cep -type datagram {} -1]
+cepPuts $c localhost 12345 hello

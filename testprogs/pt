@@ -1,0 +1,14 @@
+
+
+proc moo args {
+	puts $args
+
+	puts [fconfigure [lindex $args 0]]
+	pus [fconfigure $::c]
+
+	set ::u 1
+}
+
+set s [socket -server moo 12345]
+set c [socket localhost 12345]
+vwait u

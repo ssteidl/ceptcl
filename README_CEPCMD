@@ -1,0 +1,119 @@
+2004/02
+This should be all the possible combinations of [cep] invocation.
+I put it together when I was building Ceptcl,
+it's not complete or 100% accurate.
+
+
+cep  ?-domain domain? ?-type type?
+cep  ?-domain domain? ?-type type? ?-myaddr addr? ?-myport myport? ?-async? ?-message message? addr ?port?
+cep  ?-domain domain? ?-type type? -server command addr ?port?
+
+where applicable
+domain : one of local, inet or inet6
+type: one of stream (tcp) or datagram (udp)
+
+for most, the defaults are domain: inet, type: stream
+
+
+localpair:
+cep ?-type type?
+cep -domain local ?-type type?
+Will return a list containing the two channel ids of a locally connected pair.
+
+
+client:
+cep ?-domain domain? ?-type type? ?-myaddr addr? ?-myport myport? ?-asnyc? addr ?port?
+for local domain, the addr is the local file, and port is not specified.
+
+send a datagram:
+un	cep addr port message
+cep ?-domain domain? addr port message
+cep ?-domain domain? ?-type type? addr port message
+cep ?-domain domain? ?-type type? ?-myaddr addr? addr port message
+cep ?-domain domain? ?-type type? ?-myaddr addr? ?-myport myport? addr port message
+cep ?-domain domain? ?-type type? ?-myaddr addr? ?-myport myport? ?-asnyc? addr port message
+datagram is the default type in this configuration.
+type can only be datagram
+
+
+server:
+cep ?-domain domain? ?-type type? -server command ?-myaddr addr? port/name
+
+
+datagram reciver:
+cep  ?-domain domain? ?-type datagram? -receiver command ?-myaddr addr? port/name
+
+
+
+localpair:
+cep                 localpair stream
+cep -type stream    localpair stream
+cep -type datagram  localpair datagram
+
+
+inet stream server:
+cep -server command -myaddr addr port
+cep -server command  port
+cep -domain inet -server command -myaddr addr port
+cep -domain inet -server command  port
+cep -domain inet -type stream -server command -myaddr addr port
+cep -domain inet -type stream -server command  port
+
+
+inet6 stream server:
+cep -domain inet6 -server command -myaddr addr port
+cep -domain inet6 -server command  port
+cep -domain inet6 -type stream -server command -myaddr addr port
+cep -domain inet6 -type stream -server command  port
+
+
+local stream server:
+cep -domain local -server command name
+cep -domain local -type stream -server command name
+
+
+inet stream client:
+cep addr port
+cep -async addr port
+cep -myport myport addr port
+cep -myport myport -async addr port
+cep -myaddr myaddr addr port
+cep -myaddr myaddr -async addr port
+cep -myaddr myaddr -myport myport addr port
+cep -myaddr myaddr -myport myport -async addr port
+cep -domain inet addr port
+cep -domain inet -async addr port
+cep -domain inet -myport myport addr port
+cep -domain inet -myport myport -async addr port
+cep -domain inet -myaddr myaddr addr port
+cep -domain inet -myaddr myaddr -async addr port
+cep -domain inet -myaddr myaddr -myport myport addr port
+cep -domain inet -myaddr myaddr -myport myport -async addr port
+cep -domain inet -type stream addr port
+cep -domain inet -type stream -async addr port
+cep -domain inet -type stream -myport myport addr port
+cep -domain inet -type stream -myport myport -async addr port
+cep -domain inet -type stream -myaddr myaddr addr port
+cep -domain inet -type stream -myaddr myaddr -async addr port
+cep -domain inet -type stream -myaddr myaddr -myport myport addr port
+cep -domain inet -type stream -myaddr myaddr -myport myport -async addr port
+
+
+inet6 stream client:
+cep -domain inet6 addr port
+cep -domain inet6 -async addr port
+cep -domain inet6 -myport myport addr port
+cep -domain inet6 -myport myport -async addr port
+cep -domain inet6 -myaddr myaddr addr port
+cep -domain inet6 -myaddr myaddr -async addr port
+cep -domain inet6 -myaddr myaddr -myport myport addr port
+cep -domain inet6 -myaddr myaddr -myport myport -async addr port
+cep -domain inet6 -type stream addr port
+cep -domain inet6 -type stream -async addr port
+cep -domain inet6 -type stream -myport myport addr port
+cep -domain inet6 -type stream -myport myport -async addr port
+cep -domain inet6 -type stream -myaddr myaddr addr port
+cep -domain inet6 -type stream -myaddr myaddr -async addr port
+cep -domain inet6 -type stream -myaddr myaddr -myport myport addr port
+cep -domain inet6 -type stream -myaddr myaddr -myport myport -async addr port
+

@@ -1,0 +1,7 @@
+Changes leading up to 0.4:
+* Removed -peereid [fconfigure] option; the values now show up in the -sockname and -peername options.
+* Improved handling of local paths. Options -peername and -sockname now return a list consisting of the name used to open the local cep, the fully normalized and resolved pathname and a list consisting of the euid and egid of the connecting process.
+* Major cleanup, removed _ANSI_ARGS_ and much older and nonneeded code.
+* Added code to use poll() or kqueue() instead of select(), if desired.
+* Fixed bug that would cause a crash if an error occurred inside a srrver 'accept' proc.
+* Misc fixes, comments, changes, moose calibration, cleanups, etc.

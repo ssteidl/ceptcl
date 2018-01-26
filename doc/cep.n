@@ -1,0 +1,353 @@
+'\"
+'\" Copyright (c) 1996 Sun Microsystems, Inc.
+'\" Copyright (c) 1998-1999 by Scriptics Corporation.
+'\" Copyright (c) 2004 by Stuart Cassoff
+'\"
+'\" See the file "LICENSE" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\"
+.TH cep n 0.2 Tcl "libceptcl"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+cep \- Create a communications endpoint
+.SH SYNOPSIS
+.sp
+\fBpackage require ceptcl\fR
+.sp
+\fBcep\fR ?\fIoptions\fR? ?\fIhost\fR? ?\fIport\fR?
+.sp
+\fBcep\fR \fB\-server \fIcommand\fR ?\fIoptions\fR? \fIport/name\fR
+.sp
+\fBcep\fR \fB\-receiver \fIcommand\fR ?\fIoptions\fR? \fIport\fR
+.BE
+.SH DESCRIPTION
+.PP
+This command creates one or two  communications endpoints (cep)s and returns one
+or two channel identifiers that may be used in future invocations of commands like
+\fBread\fR, \fBputs\fR and \fBflush\fR.
+On  Unix systems, ceps are usually implemented with sockets.
+Supported domains are \fBlocal\fR (unix domain sockets and localpairs),
+\fBinet\fR (IPV4) and \fBinet6\fR (IPV6).
+Supported types are \fBstream\fR (TCP), \fBdatagram\fR (UDP) and \fBraw\fR.
+The \fBcep\fR command may be used to open either the client or
+server side of a connection, depending on whether the \fB\-server\fR
+switch is specified. A cep created with the \fB\-receiver\fR option 
+can bypass the Tcl channel system and provide additional
+information with received messages.
+.PP
+Note that the default encoding for \fIall\fR ceps except \fBrececeiver\fR ceps is the system
+encoding, as returned by \fBencoding system\fR.  Most of the time, you
+will need to use \fBfconfigure\fR to alter this to something else,
+such as \fIutf\-8\fR (ideal for communicating with other Tcl
+processes) or \fIiso8859\-1\fR (useful for many network protocols,
+especially the older ones).  Messages received on \fBreceiver\fR ceps
+do not pass through the Tcl channel system.
+.SH "LOCAL vs NON-LOCAL CEPS"
+.PP
+Ceps created in the \fBlocal\fR domain are either local
+servers or clients, or localpairs.
+Local ceps are used for communciations where
+the communicating processes reside on the same machine.
+All other ceps are considered to be non-local;
+the communicating processes need not
+reside on the same machine.  A client cep created without
+a port being specified is a local cep.  A client cep created without
+a host or a port being specified is specifically a localpair
+and generally a local cep.  The length of the name of a local
+cep is determined by the host operating system. The -sockname
+option to the fconfigure command may be used to determine
+the final name of a local cep.
+.SH "NIL ADDRESS"
+.PP
+The host/port combination of \'{} -1\' (the \fBnil address\fR)
+may be specified as the destination host and port
+for connection or binding. When specified, the cep will not
+attempt to connect or bind to the destination.
+The \fBnil address\fR can also be used to disassociate from a peer.
+.SH "CLIENT CEPS"
+.PP
+If the \fB\-server\fR or \fB\-receiver\fR options are not specified, then a client 
+cep is created, and the command returns a channel identifier
+that may be used for both reading and writing. If the \fBnil address\fR
+is not specified, then a connection attempt will be made.
+For non-local ceps, \fIhost\fR and \fIport\fR specify a host
+and port to connect to. For stream types (if not using the
+\fBnil address\fR) there must be a server accepting connections
+on this port. For datagram and raw types, the connect will always
+succeed.  \fIPort\fR is an integer port number (or service name, where supported and
+understood by the host operating system) and \fIhost\fR
+is either a domain-style name such as \fBwww.tcl.tk\fR or
+a numerical IP address such as \fB127.0.0.1\fR (type \fBinet\fR) or an
+IPV6 address such as \fBFEDC:BA98:7654:3210:FEDC:BA98:7654:3210\fR (type \fBinet6\fR).
+Use \fIlocalhost\fR to refer to the host on which the command is invoked.
+For local ceps, the \fIhost\fR refers to a local communications endpoint
+(usually a file on the local file system) and \fIport\fR is not specified.
+.PP
+The following options may also be present before \fIhost\fR
+to specify additional information about the connection:
+.TP
+\fB\-myaddr\fI addr\fR
+\fIAddr\fR gives the domain-style name or numerical IP or IPV6 address of
+the client-side network interface to use for the connection.
+This option may be useful if the client machine has multiple network
+interfaces.  If the option is omitted then the client-side interface
+will be chosen by the system software.
+.TP
+\fB\-myport \fIport\fR
+\fIPort\fR specifies an integer port number (or service name, where
+supported and understood by the host operating system) to use for the
+client's side of the connection.  If this option is omitted, the client's
+port number will be chosen at random by the system software.
+.TP
+\fB\-async\fR
+For \fBstream\fR type ceps, the \fB\-async\fR option will cause the client cep to be connected
+asynchronously. This means that the cep will be created immediately but
+may not yet be connected to the server, when the call to \fBcep\fR
+returns. When a \fBgets\fR or \fBflush\fR is done on the cep before the
+connection attempt succeeds or fails, if the cep is in blocking mode, the
+operation will wait until the connection is completed or fails. If the
+cep is in nonblocking mode and a \fBgets\fR or \fBflush\fR is done on
+the cep before the connection attempt succeeds or fails, the operation
+returns immediately and \fBfblocked\fR on the cep will return 1.
+\fBDatagram\fR and \fBraw\fR ceps should work in a similar fashion,
+although blocking may have little effect.
+Using the async option with \fBdatagram\fR or \fBraw\fR ceps 
+doesn't make a lot of sense; a connection attempt will always succeed.
+This has received little testing.
+.SH "SERVER CEPS"
+.PP
+If the \fB\-server\fR option is specified then the new cep
+will be a server cep.
+Tcl will automatically accept connections to the newly created cep.
+For each connection Tcl will create a new channel that may be used to
+communicate with the client.
+.PP
+Server channels cannot be used for input or output; their sole use is to
+accept new client connections. The channels created for each incoming
+client connection are opened for input and output. Closing the server
+channel shuts down the server so that no new connections will be
+accepted;  however, existing connections will be unaffected.
+.PP
+Server ceps depend on the Tcl event mechanism to find out when
+new connections are opened.  If the application doesn't enter the
+event loop, for example by invoking the \fBvwait\fR command or
+calling the C procedure \fBTcl_DoOneEvent\fR, then no connections
+will be accepted.
+.SH "LOCAL SERVER CEPS"
+.PP
+If \fBdomain\fR is \fBlocal\fR then the new cep will
+be a server for the local communications endpoint (usually a file
+on the local filesystem) named by \fBport/name\fR.
+Tcl will automatically accept connections to the cep.
+For each connection Tcl will create a new channel that may be used to
+communicate with the client.  Tcl then invokes \fIcommand\fR
+with three additional arguments: the name of the new channel, the
+name of the cep as given by \fBport/name\fR, and a two element
+list containing the euid and egid (in that order) of the client.
+.SH "NON-LOCAL SERVER CEPS"
+.PP
+If \fBdomain\fR is \fBinet\fR or \fBinet6\fR then the new cep will be
+a be a server for the port given by \fIport/name\fR (either an integer
+or a service name, where supported and understood by the host
+operating system).
+Tcl will automatically accept connections to the given port.
+For each connection Tcl will create a new channel that may be used to
+communicate with the client.  Tcl then invokes \fIcommand\fR
+with three additional arguments: the name of the new channel, the
+address, in network address notation, of the client's host, and
+the client's port number.
+.PP
+The following additional option may also be specified before \fIhost\fR:
+.TP
+\fB\-myaddr\fI addr\fR
+\fIAddr\fR gives the domain-style name or numerical IP or IPV6 address of
+the server-side network interface to use for the connection.
+This option may be useful if the server machine has multiple network
+interfaces.  If the option is omitted then the server cep is bound
+to the special address INADDR_ANY or :: so that it can accept
+connections from any interface.
+.PP
+If \fIport\fR is specified as zero, the operating system will allocate
+an unused port for use as a server cep.  The port number actually
+allocated my be retrieved from the created server cep using the
+\fBfconfigure\fR command to retrieve the \fB\-sockname\fR option as
+described below.
+.SH "RECEIVER CEPS"
+.PP
+If the -receiver option is specified, a receiver cep will
+be created.
+Receivers are \fBdatagram\fR or \fBraw\fR ceps which receive messages
+and pass them unmodifed, with sender information, When a message is
+received on the cep, Tcl will invoke \fIcommand\fR with five
+additional arguments: the name of the channel, the
+address, in network address notation, of the client's host,
+the client's port number, the length of the message, and
+the received message.
+.SH "LOCALPAIR CEPS"
+.PP
+Localpairs are two client ceps connected back-to-back.
+The cep command will return a list of two ceps, if sucessfull.
+The domain for localpair ceps is \fBlocal\fR by default,
+any other domain will probably generate an error.
+The options -type and -protocol may also be specified, though
+they may be of limited use. 
+.SH "COMMON CEP OPTIONS"
+These options are common to all invocations of the \fBcep\fR command.
+.TP
+\fB\-domain \fIdomain\fR
+\fIDomain\fR specifices the domain or 'address family' of the cep.
+Valid domains are \fBlocal\fR, \fBinet\fR and \fBinet6\fR.
+If the domain is not specified, then a default domain is selected.
+The default will be \fBinet\fR for non-local ceps and \fBlocal\fR
+for local ceps (\fIport\fR is not specifed)
+and localpairs (\fIhost\fR and \fIport\fR are not specified).
+.TP
+\fB\-type \fItype\fR
+\fIType\fR specifies the type of the cep.
+Valid types are \fBstream\fR, \fBdatagram\fR and \fBraw\fR.
+If the type is not specified, then a default type is selected.
+The default will be \fBstream\fR for all ceps.
+.TP
+\fB-protocol \fIprotocol\fR
+\fIProtocol\fR specifies the protocol of the cep.
+This may be an integer protocol number or a protocol  name, where
+supported and understood by the host operating system.
+The default is \fB0\fR.
+.SH "NON-LOCAL CEP OPTIONS"
+These options are common only to invocations of the \fBcep\fR command
+where a cep with a non-local domain is being created.
+.TP
+\fB\-noresolve\fR
+If the \fB\-noresolve\fR option is specified, then name resolution
+will be disabled for the new cep. Name resolution may sometimes
+cause unwanted delays in communications applications. Name
+resolution is enabled by default.
+.TP
+\fB\-noreuseaddr\fR
+If the \fB\-noreuseaddr\fR option is specified, then an attempt to
+bind or start a server on an address for which a cep (or
+other socket) is bound or a server is running will fail
+due to address conflict.
+Address reuse is enabled by default.
+.TP
+.SH "FCONFIGURE"
+The \fBfconfigure\fR command may be used to set or
+retrieve several configuration options for cep channels.
+.SH "READ-ONLY FCONFIGURE OPTIONS"
+.TP
+\fB\-domain\fR
+This option returns the domain of the given cep, one of: \fBlocal\fR, \fBinet\fR or \fBinet6\fR.
+.TP
+\fB\-error\fR
+This option gets the current error status of the given cep.  This
+is useful when you need to determine if an asynchronous connect
+operation succeeded.  If there was an error, the error message is
+returned.  If there was no error, an empty string is returned.
+.TP
+\fB\-peereid\fR
+This will return a two element list containing the effective user
+and group ids of a locally connected peer.
+If the given cep is a non-local cep, the two element list \fB{-1 -1}\fR will be returned.
+.TP
+\fB\-protocol\fR
+This option returns the protocol name of the given cep. If the protocol number is 0,
+the string \fB"default"\fR will be returned.
+.TP
+\fB\-sockname\fR
+This option returns a list of three elements, the address, the host name
+and the port number for the given cep.
+If name resolution has been disabled for the given cep, no attempt will be
+made to resolve the host name from the address, the second element of
+the list is identical to the address, its first element.
+If name resolution has been enabled for the given cep, an attempt will be
+made to resolve the host name from the address.
+If the host name cannot be resolved, the second element of
+the list is identical to the address, its first element.
+.TP
+\fB\-type\fR
+This option returns the type of the given cep, one of: \fBstream\fR, \fBdatagram\fR or \fBraw\fR.
+.SH "WRITE-ONLY FCONFIGURE OPTIONS"
+.TP
+\fB\-join \fIgroup\fR
+This option will attempt to join the multicast group \fIgroup\fR.
+An empty string passed to this option will do nothing, and
+will not generate an error.
+.TP
+\fB\-leave \fIgroup\fR
+This option will attempt to leave the multicast group \fIgroup\fR.
+An empty string passed to this option will do nothing, and
+will not generate an error.
+.SH "READ/WRITE FCONFIGURE OPTIONS"
+.TP
+\fB\-broadcast \fIboolean\fR
+This otion sets or returns the broadcast flag for the cep.  This may
+be required on some systems in order to send brodcast messages.
+This option is only useful for datagram and raw ceps; the system
+may consider it an error to attempt to set this for other cep types.
+.TP
+\fB\-header \fIboolean\fR
+This option only applies to raw inet ceps.  If true, then the system
+will expect the user to supply the ip header for outgoing messages.
+The ip header is always received.
+.TP
+\fB\-hops \fIinteger\fR
+This option sets or returns the number of unicast hops (ttl or time-to-live) for outgoing messages.
+For stream and datagram ceps.
+.TP
+\fB\-loop \fIboolean\fR
+This option sets or returns the multicast loopback option for the cep.
+If true then outbound multicast messages will be looped back to the sender.
+.TP
+\fB\-maddr \fIaddr\fR
+This option will set or returns the interface address
+for outbound multicast messages. It should be possible to set
+it to INADDR_ANY (to reset to default), but that's not
+implemented yet.
+.TP
+\fB\-mhops \fIinteger\fR
+This option sets or returns the number of multicast hops (ttl or time-to-live) for outgoing messages.
+.TP
+\fB\-peername \fIhost port\fR
+When queried, this option returns a list of three elements; these are the
+address, the host name and the port of the peer to which the
+given cep is connected or bound.
+If name resolution has been disabled for the given cep, no attempt will be
+made to resolve the host name from the address, the second element of
+the list is identical to the address, its first element.
+If name resolution has been enabled for the given cep, an attempt will be
+made to resolve the host name from the address.
+If the host name cannot be resolved, the second element of
+the list is identical to the address, its first element.
+For datagram and raw ceps this option may be used
+to rebind the cep to a new host to which all outbound messages
+will be sent.  Inbound messages will be received only from this host.
+Only one peer may be associated at a time.  Setting a new peer will
+dissaociate from the current peer, if any. If the \fBnil address\fR
+is specified, then the cep will drop any association it may have.
+A cep without an association can receive messages from any host.
+.TP
+\fB\-resolve \fIboolean\fR
+This option sets or returns the resolve option for the given cep.
+If true then the system will attempt to resolve between host names and addresses
+when options -sockname or -peername are used, when joining or
+leaving a multicast group, or when a server cep accepts a new client.
+.TP
+\fB\-route \fIboolean\fR
+This option only applies to ceps of domain \fBinet\fR
+and types \fBstream\fR or \fBdatagram\fR.
+If set to \fBtrue\fR, then the system will route outgoing messages for the given cep.
+When querying, a boolean value is returned; \fBtrue\fR indicates
+that the system will route outgoing messages for the given cep.
+.TP
+\fB\-shutdown \fIvalue(s)\fR
+This option returns the shutdown state of the given cep,
+or shuts down the cep for reading, writing or both.
+Valid values are \fBread\fR, \fBwrite\fR, \fB{read write}\fR, or \fB{write read}\fR.
+.PP
+.SH "SEE ALSO"
+fconfigure(n), flush(n), open(n), read(n), sendto(n), socket(n)
+.SH "ALSO ALSO"
+icmp(4), ip(4), ip6(4), socket(2), tcp(4), udp(4), etc, and a bunch of RFCs.
+.SH KEYWORDS
+bind, channel, connection, domain name, host, network address, socket, tcp, udp

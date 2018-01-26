@@ -1,0 +1,25 @@
+'\"
+'\" Copyright (c) 2004 by Stuart Cassoff
+'\"
+'\" See the file "LICENSE" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\"
+.TH ceptcl n 1.0 Tcl "libceptcl"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+Ceptcl \- Communications EndPoints for Tcl
+.SH SYNOPSIS
+.sp
+\fBpackage require ceptcl\fR
+.BE
+
+.SH DESCRIPTION
+.PP
+Ceptcl is a Tcl exension which provides additional socket types and features.
+When loaded, Ceptcl adds the commands 'cep' and 'sendto'.
+.SH "SEE ALSO"
+cep(n), sendto(n)
+
+.SH KEYWORDS
+bind, channel, connection, domain name, host, network address, socket, tcp, udp
